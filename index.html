@@ -529,19 +529,19 @@ function downloadMemberListPDF() {
   
 
 function backupAllToCloud() {
-  if (!members || members.length === 0) return alert("सदस्य सापडले नाहीत");
+  if (!members || members.length === 0) return alert("❌ सदस्य सापडले नाहीत");
 
   const allData = members.map(member => {
-    const totalShare = member.shares.reduce((sum, s) => sum + parseFloat(s.amount || 0), 0);
-    const totalLoan = member.loans.reduce((sum, l) => {
+    const totalShare = (member.shares || []).reduce((sum, s) => sum + parseFloat(s.amount || 0), 0);
+    const totalLoan = (member.loans || []).reduce((sum, l) => {
       return sum + (parseFloat(l.loanAmount || 0) + parseFloat(l.interest || 0) - parseFloat(l.principalPaid || 0));
     }, 0);
 
     return {
       name: member.name || "",
       contact: member.contact || "",
-      totalShare: totalShare,
-      totalLoan: totalLoan,
+      totalShare,
+      totalLoan,
       shares: member.shares || [],
       loans: member.loans || []
     };
@@ -549,14 +549,13 @@ function backupAllToCloud() {
 
   fetch("https://script.google.com/macros/s/AKfycbx4QBMq9tcTBc11tlVqYFJfbqQO-4Bung0EKUNBnTdgtVUlZJja5xEJVkl1fRILU7_P/exec", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ members: allData })
+    headers: { "Content-Type": "text/plain;charset=utf-8" },
+    body: JSON.stringify({ members: allData }) // ✅ FIX: allData वापरला आहे
   })
     .then(res => res.text())
     .then(msg => alert("✅ Backup OK: " + msg))
     .catch(err => alert("❌ Backup Failed: " + err));
 }
-
 
 
 
@@ -605,8 +604,14 @@ function backupAllToCloud() {
   }
 
   function restoreFromCloud() {
-  fetch("https://script.google.com/macros/s/AKfycbx4QBMq9tcTBc11tlVqYFJfbqQO-4Bung0EKUNBnTdgtVUlZJja5xEJVkl1fRILU7_P/exec")
-    .then(res => res.json())
+  fetch("https://script.google.com/macros/s/AKfycbx4QBMq9tcTBc11tlVqYFJfbqQO-4Bung0EKUNBnTdgtVUlZJja5xEJVkl1fRILU7_P/exec", {
+    method: "GET",
+    mode: "cors"
+  })
+    .then(res => {
+      if (!res.ok) throw new Error("HTTP error " + res.status);
+      return res.json();
+    })
     .then(data => {
       members = data.map(d => ({
         name: d["Name"],
@@ -625,17 +630,20 @@ function backupAllToCloud() {
 }
 
 
-// ✅ हे शेवटी टाका
-window.onload = () => {
-  loadFromLocal();
-  restoreFromCloud();
-};
+
 
 
 
 
   // Initialization
   loadMembers();
+
+
+// ✅ हे शेवटी टाका
+window.onload = () => {
+  loadFromLocal();
+  restoreFromCloud();
+};
 
 
 </script>
