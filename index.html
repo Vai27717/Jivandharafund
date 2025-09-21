@@ -43,20 +43,20 @@
 <h1>Jivandhara Fund Manager</h1>
 <div style="margin-left:auto;font-weight:700">Application Developed by Vaibhav Enterprises</div>
 <section class="section">
-  <h2>नवा सदस्य जोडा</h2>
+  <h2>नवा सदस्य जोडा / Add New Share Holder</h2>
   <div class="flex-row">
-    <input type="text" id="memberName" placeholder="सदस्य नाव" />
-    <input type="text" id="memberContact" placeholder="संपर्क क्रमांक" />
-    <button onclick="addMember()">सदस्य जोडा</button>
-    <button onclick="backupAllToCloud()">☁️ सर्व सदस्य Backup</button>
-<button onclick="restoreFromCloud()">📥 Backup मधून Load</button>
+    <input type="text" id="memberName" placeholder="Share Holder Name" />
+    <input type="text" id="memberContact" placeholder="Contact No" />
+    <button onclick="addMember()">+ Add S.H.</button>
+    <button onclick="backupAllToCloud()">☁️ All Backup</button>
+<button onclick="restoreFromCloud()">📥 Backup To Load</button>
 
 
 </div>
 </section>
 
 <section class="section">
-  <h2>सदस्य निवडा</h2>
+  <h2>सदस्य निवडा / Select Share Holder</h2>
   <select id="memberSelect" onchange="loadMemberData()">
     <option value="">-- सदस्य निवडा --</option>
   </select>
@@ -64,8 +64,8 @@
 </section>
 
 <section class="section">
-  <h2>सदस्यांची यादी</h2>
-  <button onclick="showMemberList()">सदस्य यादी दाखवा</button>
+  <h2>सदस्यांची यादी / Share Holder List</h2>
+  <button onclick="showMemberList()">Select share Holder</button>
   <table id="memberListTable" style="margin-top: 10px; display: none;">
     <thead>
       <tr>
@@ -547,7 +547,7 @@ function backupAllToCloud() {
     };
   });
 
-  fetch("https://script.google.com/macros/s/AKfycbx4QBMq9tcTBc11tlVqYFJfbqQO-4Bung0EKUNBnTdgtVUlZJja5xEJVkl1fRILU7_P/exec", {
+  fetch("https://script.google.com/macros/s/AKfycbwVc5ZWGKZBkifVSLPrb9JSmys2F5tfhsu1CexWMUB1UlJCAmuX95Kk50ZkNb0QbnO4/exec", {
     method: "POST",
     headers: { "Content-Type": "text/plain;charset=utf-8" },
     body: JSON.stringify({ members: allData }) // ✅ FIX: allData वापरला आहे
@@ -603,8 +603,8 @@ function backupAllToCloud() {
     reader.readAsArrayBuffer(file);
   }
 
-  function restoreFromCloud() {
-  fetch("https://script.google.com/macros/s/AKfycbx4QBMq9tcTBc11tlVqYFJfbqQO-4Bung0EKUNBnTdgtVUlZJja5xEJVkl1fRILU7_P/exec", {
+ function restoreFromCloud() {
+  fetch("https://script.google.com/macros/s/AKfycbwVc5ZWGKZBkifVSLPrb9JSmys2F5tfhsu1CexWMUB1UlJCAmuX95Kk50ZkNb0QbnO4/exec", {
     method: "GET",
     mode: "cors"
   })
@@ -622,8 +622,8 @@ function backupAllToCloud() {
         loans: JSON.parse(d["Loans"] || "[]")
       }));
 
-      saveToLocal();
-      updateMemberDropdown();
+      saveToLocal();              
+      populateMemberSelect();     // ✅ इथे बदल झाला
       alert("✅ Restore Complete");
     })
     .catch(err => alert("❌ Restore Error: " + err));
@@ -635,8 +635,21 @@ function backupAllToCloud() {
 
 
 
+
+
   // Initialization
   loadMembers();
+
+function loadFromLocal() {
+  const data = localStorage.getItem('jivandharaMembers');
+  members = data ? JSON.parse(data) : [];
+  populateMemberSelect();
+}
+
+function saveToLocal() {
+  localStorage.setItem('jivandharaMembers', JSON.stringify(members));
+}
+
 
 
 // ✅ हे शेवटी टाका
