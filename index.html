@@ -109,12 +109,15 @@
         background: #444;
       }
     }
+  
   </style>
+
 </head>
 <body>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
 
 <h1>Jivandhara Fund Manager</h1>
@@ -192,6 +195,8 @@
 <div style="text-align: right; margin-bottom: 5px;">
   <button onclick="shareLoanData()" style="background: #25D366; color: white; border: none; padding: 4px 10px; border-radius: 4px;">
     📤 WhatsApp कर्ज डेटा
+<button onclick="downloadCurrentMemberPDF()">📄 सदस्याचा PDF डाउनलोड करा</button>
+
   </button>
 </div>
 
@@ -656,6 +661,48 @@ function downloadMemberListPDF() {
   doc.save("shareholder_list.pdf");
 }
 
+
+
+
+function downloadCurrentMemberPDF() {
+  if (currentMemberIndex === null) return alert("कृपया सदस्य निवडा");
+
+  const member = members[currentMemberIndex];
+  const element = document.getElementById("memberDataSection");
+
+  html2canvas(element, {
+    useCORS: true,
+    scale: 2
+  }).then(canvas => {
+    const imgData = canvas.toDataURL("image/png");
+    const pdf = new jspdf.jsPDF("p", "mm", "a4");
+
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const pageHeight = pdf.internal.pageSize.getHeight();
+    const imgWidth = pageWidth;
+    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+    let position = 0;
+
+    if (imgHeight > pageHeight) {
+      // Multi-page support
+      let heightLeft = imgHeight;
+      let y = 0;
+
+      while (heightLeft > 0) {
+        pdf.addImage(imgData, "PNG", 0, y, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+        y -= pageHeight;
+        if (heightLeft > 0) pdf.addPage();
+      }
+    } else {
+      // Single page
+      pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+    }
+
+    pdf.save(`${member.name}_data.pdf`);
+  });
+}
 
 
 
