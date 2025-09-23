@@ -1,42 +1,119 @@
 <!DOCTYPE html>
 <html lang="mr">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Jivandhara Fund Manager</title>
-<style>
-  body { font-family: Arial, sans-serif; padding: 10px; max-width: 900px; margin: auto; background: #f7f9fc; }
-  h2 { margin-top: 30px; }
-  input, button, select { font-size: 1rem; padding: 6px 8px; margin: 4px 0; }
-  table { border-collapse: collapse; width: 100%; margin-bottom: 15px; background: white; }
-  th, td { border: 1px solid #aaa; padding: 6px; text-align: center; }
-  th { background-color: #d0f0d0; }
-  td[contenteditable] { background-color: #fefefe; cursor: text; }
-  button { cursor: pointer; }
-  .flex-row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
-  .totals { font-weight: bold; background: #e0ffe0; }
-  .small-btn { font-size: 0.8rem; padding: 2px 6px; }
-  .section { margin-bottom: 40px; padding: 10px; background: #fff; box-shadow: 0 0 5px #ccc; border-radius: 4px;}
-  label { display: block; margin-top: 8px; }
-  @media(max-width: 600px) {
-    body { padding: 5px; }
-    table, .flex-row { font-size: 0.9rem; }
-  
-  #memberListTable th {
-  background: #c2e0ff;
-}
-#memberListTable td {
-  background: #f9f9f9;
-}
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Jivandhara Fund Manager</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 10px;
+      max-width: 900px;
+      margin: auto;
+      background: #1e1e2f; /* गडद background */
+      color: #ffffff; /* पांढरा टेक्स्ट */
+    }
 
+    h2, h1 {
+      color: #ffffff;
+    }
 
-  }
+    input, button, select {
+      font-size: 1rem;
+      padding: 6px 8px;
+      margin: 4px 0;
+      background-color: #2c2c2c;
+      color: #ffffff;
+      border: 1px solid #444;
+      border-radius: 4px;
+    }
 
-</style>
+    input::placeholder {
+      color: #ccc;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin-bottom: 15px;
+      background: #2a2a2a;
+      color: #ffffff;
+    }
+
+    th, td {
+      border: 1px solid #555;
+      padding: 6px;
+      text-align: center;
+    }
+
+    th {
+      background-color: #4caf50; /* हिरवा heading */
+      color: white;
+    }
+
+    td[contenteditable] {
+      background-color: #3a3a3a;
+      color: white;
+      cursor: text;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .flex-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .totals {
+      font-weight: bold;
+      background: #355e35; /* थोडा वेगळा गडद हिरवा */
+    }
+
+    .small-btn {
+      font-size: 0.8rem;
+      padding: 2px 6px;
+    }
+
+    .section {
+      margin-bottom: 40px;
+      padding: 10px;
+      background: #2c2c2c;
+      color: #ffffff;
+      box-shadow: 0 0 5px #444;
+      border-radius: 4px;
+    }
+
+    label {
+      display: block;
+      margin-top: 8px;
+    }
+
+    @media(max-width: 600px) {
+      body {
+        padding: 5px;
+      }
+
+      table, .flex-row {
+        font-size: 0.9rem;
+      }
+
+      #memberListTable th {
+        background: #3c6e91;
+      }
+
+      #memberListTable td {
+        background: #444;
+      }
+    }
+  </style>
 </head>
 <body>
-  
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
 
 
@@ -72,6 +149,7 @@
         <th>नाव</th>
         <th>Total Share Amount (T.S.A)</th>
         <th>Total Loan Balance Amount (T.L.B.A)</th>
+
       </tr>
     </thead>
     <tbody></tbody>
@@ -83,8 +161,16 @@
 
 <section class="section" id="memberDataSection" style="display:none;">
 
-  <h2>Share जमा (₹)</h2>
+  
   <table id="shareTable">
+<h2 id="shareHeading">Share जमा (₹)</h2>
+
+<div style="text-align: right; margin-bottom: 5px;">
+  <button onclick="shareShareData()" style="background: #25D366; color: white; border: none; padding: 4px 10px; border-radius: 4px;">
+    📤 WhatsApp Share जमा
+  </button>
+</div>
+
     <thead>
       <tr><th>महिना</th><th>जमा रक्कम (₹)</th></tr>
     </thead>
@@ -100,9 +186,15 @@
   
 <button onclick="removeShareRow()">- Remove Row</button>
 <div id="shareRowCount" style="display:inline-block; margin-left:10px; font-weight:bold;">Rows: 0</div>
-
-  <h2>कर्ज (Loan) (₹)</h2>
+  
+  <h2 id="loanHeading">कर्ज (Loan) (₹)</h2>
   <table id="loanTable">
+<div style="text-align: right; margin-bottom: 5px;">
+  <button onclick="shareLoanData()" style="background: #25D366; color: white; border: none; padding: 4px 10px; border-radius: 4px;">
+    📤 WhatsApp कर्ज डेटा
+  </button>
+</div>
+
     <thead>
       <tr><th>महिना</th><th>कर्ज रक्कम (₹)</th><th>व्याज (3%)</th><th>मुद्दल भरले</th><th>शिल्लक</th></tr>
     </thead>
@@ -186,124 +278,163 @@
   }
 
   function loadMemberData() {
-    const select = document.getElementById('memberSelect');
-    const idx = select.value;
-    currentMemberIndex = idx === "" ? null : parseInt(idx);
+  const select = document.getElementById('memberSelect');
+  const idx = select.value;
+  currentMemberIndex = idx === "" ? null : parseInt(idx);
 
-    if(currentMemberIndex === null){
-      document.getElementById('memberDataSection').style.display = 'none';
-      return;
-    }
-
-    document.getElementById('memberDataSection').style.display = 'block';
-
-    const member = members[currentMemberIndex];
-
-    // Load shares table
-    const shareTbody = document.querySelector('#shareTable tbody');
-    shareTbody.innerHTML = '';
-    member.shares.forEach((row, i) => {
-      shareTbody.appendChild(createShareRow(i + 1, row.amount));
-    });
-    if(member.shares.length === 0) {
-      // Minimum 1 row default
-      shareTbody.appendChild(createShareRow(1, 0));
-    }
-    updateShareTotal();
-
-    // Load loans table
-    const loanTbody = document.querySelector('#loanTable tbody');
-    loanTbody.innerHTML = '';
-    member.loans.forEach((row, i) => {
-      loanTbody.appendChild(createLoanRow(i + 1, row.loanAmount, row.interest, row.principalPaid));
-    });
-    if(member.loans.length === 0) {
-      loanTbody.appendChild(createLoanRow(1, 0, 0, 0));
-    }
-    updateLoanTotals();
-
-    // Attach event listeners for contenteditable cells
-    addContentEditableListeners();
+  if(currentMemberIndex === null){
+    document.getElementById('memberDataSection').style.display = 'none';
+    return;
   }
 
-  function createShareRow(month, amount) {
-    const tr = document.createElement('tr');
-    const tdMonth = document.createElement('td');
-    tdMonth.textContent = month;
-    tr.appendChild(tdMonth);
+  document.getElementById('memberDataSection').style.display = 'block';
 
-    const tdAmount = document.createElement('td');
-    tdAmount.contentEditable = "true";
-    tdAmount.textContent = amount || "0";
-    tdAmount.addEventListener('input', () => {
-      saveShareData();
-      updateShareTotal();
-    });
-    tr.appendChild(tdAmount);
+  const member = members[currentMemberIndex];
+  document.getElementById("shareHeading").textContent = `Share जमा (₹) - ${member.name}`;
+  document.getElementById("loanHeading").textContent = `कर्ज (Loan) (₹) - ${member.name}`;
 
-    return tr;
+  // Load shares table
+  const shareTbody = document.querySelector('#shareTable tbody');
+  shareTbody.innerHTML = '';
+  member.shares.forEach((row) => {
+    shareTbody.appendChild(createShareRow(row.date, row.amount));
+  });
+  if(member.shares.length === 0) {
+    shareTbody.appendChild(createShareRow("", 0));
   }
+  updateShareTotal();
 
-  function createLoanRow(month, loanAmount, interest, principalPaid) {
-    const tr = document.createElement('tr');
-
-    // Month cell
-    const tdMonth = document.createElement('td');
-    tdMonth.textContent = month;
-    tr.appendChild(tdMonth);
-
-    // Loan amount cell (editable)
-    const tdLoan = document.createElement('td');
-    tdLoan.contentEditable = "true";
-    tdLoan.textContent = loanAmount || "0";
-    tdLoan.addEventListener('input', () => {
-      recalcLoanRow(tr);
-      saveLoanData();
-      updateLoanTotals();
-    });
-    tr.appendChild(tdLoan);
-
-    // Interest cell (auto-calculated, not editable)
-    const tdInterest = document.createElement('td');
-    tdInterest.textContent = interest ? interest.toFixed(2) : "0.00";
-    tr.appendChild(tdInterest);
-
-    // Principal Paid cell (editable)
-    const tdPrincipal = document.createElement('td');
-    tdPrincipal.contentEditable = "true";
-    tdPrincipal.textContent = principalPaid || "0";
-    tdPrincipal.addEventListener('input', () => {
-      recalcLoanRow(tr);
-      saveLoanData();
-      updateLoanTotals();
-    });
-    tr.appendChild(tdPrincipal);
-
-    // Balance cell (auto-calculated)
-    const tdBalance = document.createElement('td');
-    tdBalance.textContent = "0.00";
-    tr.appendChild(tdBalance);
-
-    // Calculate balance initially
-    recalcLoanRow(tr);
-
-    return tr;
+  // Load loans table
+  const loanTbody = document.querySelector('#loanTable tbody');
+  loanTbody.innerHTML = '';
+  member.loans.forEach((row) => {
+    loanTbody.appendChild(createLoanRow(row.date, row.loanAmount, row.interest, row.principalPaid));
+  });
+  if(member.loans.length === 0) {
+    loanTbody.appendChild(createLoanRow("", 0, 0, 0));
   }
+  updateLoanTotals();
 
-  // Add a new share row
-  function addShareRow() {
-    if(currentMemberIndex === null) return alert("कृपया सदस्य निवडा");
-    const tbody = document.querySelector('#shareTable tbody');
-    if(tbody.rows.length >= 36) {
-      alert("अधिकतम 36 महिने.");
-      return;
-    }
-    
-    const newRow = createShareRow(tbody.rows.length + 1, 0);
-    tbody.appendChild(newRow);
+  addContentEditableListeners();
+}
+
+
+ function createShareRow(dateValue = "", amount = 0) {
+  const tr = document.createElement("tr");
+
+  const tdDate = document.createElement("td");
+  const inputDate = document.createElement("input");
+  inputDate.type = "month";
+  inputDate.value = dateValue;
+
+  const formattedDateDiv = document.createElement("div");
+  formattedDateDiv.style.fontSize = "0.8em";
+  formattedDateDiv.style.color = "#666";
+  formattedDateDiv.textContent = formatMonthYear(dateValue);
+
+  inputDate.onchange = () => {
+    formattedDateDiv.textContent = formatMonthYear(inputDate.value);
+    saveShareData();
+  };
+
+  tdDate.appendChild(inputDate);
+  tdDate.appendChild(formattedDateDiv);
+  tr.appendChild(tdDate);
+
+  const tdAmount = document.createElement("td");
+  tdAmount.contentEditable = "true";
+  tdAmount.textContent = amount || "";
+  tdAmount.addEventListener("input", () => {
     saveShareData();
     updateShareTotal();
+  });
+  tr.appendChild(tdAmount);
+
+  return tr;
+}
+
+
+function createLoanRow(dateValue = "", loanAmount = 0, interest = 0, principalPaid = 0) {
+  const tr = document.createElement("tr");
+
+  // Date column
+  const tdDate = document.createElement("td");
+  const inputDate = document.createElement("input");
+  inputDate.type = "month";
+  inputDate.value = dateValue;
+
+  // खाली formatted date दाखवण्यासाठी div
+  const formattedDateDiv = document.createElement("div");
+  formattedDateDiv.style.fontSize = "0.8em";
+  formattedDateDiv.style.color = "#666";
+  formattedDateDiv.textContent = formatMonthYear(dateValue);
+
+  inputDate.onchange = () => {
+    formattedDateDiv.textContent = formatMonthYear(inputDate.value);
+    saveLoanData();
+  };
+
+  tdDate.appendChild(inputDate);
+  tdDate.appendChild(formattedDateDiv);
+  tr.appendChild(tdDate);
+
+  // Loan Amount column
+  const tdLoan = document.createElement("td");
+  tdLoan.contentEditable = "true";
+  tdLoan.textContent = loanAmount || "";
+  tdLoan.addEventListener("input", () => {
+    recalcLoanRows();
+    saveLoanData();
+    updateLoanTotals();
+  });
+  tr.appendChild(tdLoan);
+
+  // Interest column
+  const tdInterest = document.createElement("td");
+  tdInterest.textContent = interest.toFixed ? interest.toFixed(2) : "0.00";
+  tr.appendChild(tdInterest);
+
+  // Principal Paid column
+  const tdPrincipal = document.createElement("td");
+  tdPrincipal.contentEditable = "true";
+  tdPrincipal.textContent = principalPaid || "";
+  tdPrincipal.addEventListener("input", () => {
+    recalcLoanRows();
+    saveLoanData();
+    updateLoanTotals();
+  });
+  tr.appendChild(tdPrincipal);
+
+  // Balance column
+  const tdBalance = document.createElement("td");
+  tdBalance.textContent = "0.00";
+  tr.appendChild(tdBalance);
+
+  return tr;
+}
+
+
+  // Add a new share row
+ function addShareRow() {
+  if(currentMemberIndex === null) return alert("कृपया सदस्य निवडा");
+
+  const tbody = document.querySelector('#shareTable tbody');
+  if (tbody.rows.length >= 36) {
+    alert("अधिकतम 36 महिने.");
+    return;
   }
+
+  // आजचा महिना (YYYY-MM format) — input type="month" साठी
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, '0');
+  const dateValue = `${year}-${month}`; // उदा. "2025-09"
+
+  const newRow = createShareRow(dateValue, 0);
+  tbody.appendChild(newRow);
+  saveShareData();
+  updateShareTotal();
+}
   
 function removeShareRow() {
   const table = document.getElementById("shareTable").querySelector("tbody");
@@ -316,17 +447,20 @@ function removeShareRow() {
   
   // Add a new loan row
   function addLoanRow() {
-    if(currentMemberIndex === null) return alert("कृपया सदस्य निवडा");
-    const tbody = document.querySelector('#loanTable tbody');
-    if(tbody.rows.length >= 36) {
-      alert("अधिकतम 36 महिने.");
-      return;
-    }
-    const newRow = createLoanRow(tbody.rows.length + 1, 0, 0, 0);
-    tbody.appendChild(newRow);
-    saveLoanData();
-    updateLoanTotals();
-  }
+  if(currentMemberIndex === null) return alert("कृपया सदस्य निवडा");
+
+  const tbody = document.querySelector('#loanTable tbody');
+
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, '0');
+  const dateValue = `${year}-${month}`; // उदा. "2025-09"
+
+  const newRow = createLoanRow(dateValue, 0, 0, 0);
+  tbody.appendChild(newRow);
+  saveLoanData();
+  updateLoanTotals();
+}
     
   function removeLoanRow() {
   const table = document.getElementById("loanTable").querySelector("tbody");
@@ -339,29 +473,32 @@ function removeShareRow() {
   
 
    function saveShareData() {
-    const tbody = document.querySelector('#shareTable tbody');
-    const shares = [];
-    for(let row of tbody.rows){
-      const val = parseFloat(row.cells[1].textContent) || 0;
-      shares.push({ amount: val });
-    }
-    members[currentMemberIndex].shares = shares;
-    saveMembers();
+  const tbody = document.querySelector("#shareTable tbody");
+  const shares = [];
+  for (let row of tbody.rows) {
+    const date = row.cells[0].querySelector("input").value;
+    const amount = parseFloat(row.cells[1].textContent) || 0;
+    shares.push({ date, amount });
   }
+  members[currentMemberIndex].shares = shares;
+  saveMembers();
+}
+
 
   function saveLoanData() {
-    const tbody = document.querySelector('#loanTable tbody');
-    const loans = [];
-    for(let row of tbody.rows){
-      const loanAmount = parseFloat(row.cells[1].textContent) || 0;
-      const interest = parseFloat(row.cells[2].textContent) || 0;
-      const principalPaid = parseFloat(row.cells[3].textContent) || 0;
-      // Balance auto-calculated but store if needed
-      loans.push({ loanAmount, interest, principalPaid });
-    }
-    members[currentMemberIndex].loans = loans;
-    saveMembers();
+  const tbody = document.querySelector("#loanTable tbody");
+  const loans = [];
+  for (let row of tbody.rows) {
+    const date = row.cells[0].querySelector("input").value;
+    const loanAmount = parseFloat(row.cells[1].textContent) || 0;
+    const interest = parseFloat(row.cells[2].textContent) || 0;
+    const principalPaid = parseFloat(row.cells[3].textContent) || 0;
+    loans.push({ date, loanAmount, interest, principalPaid });
   }
+  members[currentMemberIndex].loans = loans;
+  saveMembers();
+}
+
 
   function updateShareTotal() {
     const tbody = document.querySelector('#shareTable tbody');
@@ -372,41 +509,57 @@ function removeShareRow() {
     document.getElementById('totalShare').textContent = total.toFixed(2);
   }
 
-  function recalcLoanRow(tr) {
-    // 3% व्याज monthly on loan balance (loanAmount - principalPaid)
-    const loanAmount = parseFloat(tr.cells[1].textContent) || 0;
-    let interest = 0;
-    const principalPaid = parseFloat(tr.cells[3].textContent) || 0;
+  function recalcLoanRows() {
+  const tbody = document.querySelector('#loanTable tbody');
+  let prevBalance = 0;
 
-    // व्याज = 3% of (loanAmount - principalPaid) if loanAmount > principalPaid
-    const balanceBefore = loanAmount - principalPaid;
-    if(balanceBefore > 0) {
-      interest = balanceBefore * 0.03;
+  for (let i = 0; i < tbody.rows.length; i++) {
+    const row = tbody.rows[i];
+    const loanAmount = parseFloat(row.cells[1].textContent) || 0;
+    const principalPaid = parseFloat(row.cells[3].textContent) || 0;
+
+    let interest = 0;
+    // पहिल्या row साठी व्याज नसेल — दुसऱ्या row पासून
+    if (i > 0) {
+      interest = prevBalance * 0.03;  // मागची शिल्लक * 3%
     }
 
-    tr.cells[2].textContent = interest.toFixed(2);
+    // चालू कर्ज रक्कम + व्याज - मुद्दल दिलेली
+    const balance = prevBalance + loanAmount + interest - principalPaid;
 
-    // Balance = loanAmount + interest - principalPaid
-    const balance = loanAmount + interest - principalPaid;
-    tr.cells[4].textContent = balance.toFixed(2);
+    // सेल अपडेट
+    row.cells[2].textContent = interest.toFixed(2);  // व्याज
+    row.cells[4].textContent = balance.toFixed(2);   // शिल्लक
+  
+    // पुढच्या iteration साठी शिल्लक ठेवा
+    prevBalance = balance;
   }
+}
+
+
 
   function updateLoanTotals() {
-    const tbody = document.querySelector('#loanTable tbody');
-    let totalLoan = 0, totalInterest = 0, totalPrincipal = 0, totalBalance = 0;
+  const tbody = document.querySelector('#loanTable tbody');
+  let totalLoan = 0, totalInterest = 0, totalPrincipal = 0, totalBalance = 0;
 
-    for(let row of tbody.rows){
-      totalLoan += parseFloat(row.cells[1].textContent) || 0;
-      totalInterest += parseFloat(row.cells[2].textContent) || 0;
-      totalPrincipal += parseFloat(row.cells[3].textContent) || 0;
-      totalBalance += parseFloat(row.cells[4].textContent) || 0;
-    }
-
-    document.getElementById('totalLoan').textContent = totalLoan.toFixed(2);
-    document.getElementById('totalInterest').textContent = totalInterest.toFixed(2);
-    document.getElementById('totalPrincipal').textContent = totalPrincipal.toFixed(2);
-    document.getElementById('totalBalance').textContent = totalBalance.toFixed(2);
+  for (let row of tbody.rows) {
+    totalLoan += parseFloat(row.cells[1].textContent) || 0;
+    totalInterest += parseFloat(row.cells[2].textContent) || 0;
+    totalPrincipal += parseFloat(row.cells[3].textContent) || 0;
   }
+
+  // ✅ शिल्लक फक्त अंतिम row मधून घ्या
+  const lastRow = tbody.rows[tbody.rows.length - 1];
+  if (lastRow) {
+    totalBalance = parseFloat(lastRow.cells[4].textContent) || 0;
+  }
+
+  document.getElementById('totalLoan').textContent = totalLoan.toFixed(2);
+  document.getElementById('totalInterest').textContent = totalInterest.toFixed(2);
+  document.getElementById('totalPrincipal').textContent = totalPrincipal.toFixed(2);
+  document.getElementById('totalBalance').textContent = totalBalance.toFixed(2);
+}
+
 
   function addContentEditableListeners() {
     // Just to be safe, add input listeners again for dynamic rows
@@ -466,6 +619,15 @@ function removeShareRow() {
 }
 
 
+function formatMonthYear(monthValue) {
+  if (!monthValue) return "";
+  const [year, month] = monthValue.split("-");
+  const date = new Date(year, month - 1);
+  return date.toLocaleString('en-US', { month: 'long', year: 'numeric' });  // English मधून फॉरमॅट
+}
+
+
+
 function downloadMemberListPDF() {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
@@ -498,6 +660,100 @@ function downloadMemberListPDF() {
 
 
 
+function formatMonth(dateStr) {
+  const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  if (!dateStr) return 'महिना नाही';
+
+  const parts = dateStr.split('-');
+  if (parts.length !== 2) return dateStr;
+
+  const year = parts[0];
+  const monthIndex = parseInt(parts[1], 10) - 1;
+  if (monthIndex < 0 || monthIndex > 11) return dateStr;
+
+  return `${months[monthIndex]}-${year}`;
+}
+
+function shareShareData() {
+  if (currentMemberIndex === null) return alert("कृपया सदस्य निवडा");
+
+  const member = members[currentMemberIndex];
+  let message = `${member.name} (Share) जमा डेटा:\n==================\n`;
+
+  member.shares.forEach((row, i) => {
+    const month = formatMonth(row.date);  // जर तुमच्याकडे date असेल तर वापरा
+    const amount = parseFloat(row.amount || 0);
+    message += `${i + 1}:| ${month} | ₹${amount.toFixed(2)}\n`;
+  });
+
+  const total = member.shares.reduce((sum, r) => sum + parseFloat(r.amount || 0), 0);
+  message += `==================\nएकूण जमा: ₹${total.toFixed(2)}`;
+
+  const encoded = encodeURIComponent(message);
+  window.open(`https://wa.me/?text=${encoded}`, '_blank');
+}
+
+
+
+
+
+//------------WhatsApp Lone share ---------------//
+
+function formatMonth(dateStr) {
+  const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  if (!dateStr) return 'महिना नाही';
+
+  const parts = dateStr.split('-');
+  if (parts.length !== 2) return dateStr;
+
+  const year = parts[0];
+  const monthIndex = parseInt(parts[1], 10) - 1;
+  if (monthIndex < 0 || monthIndex > 11) return dateStr;
+
+  return `${months[monthIndex]}-${year}`;
+}
+
+function shareLoanData() {
+  if (currentMemberIndex === null) return alert("कृपया सदस्य निवडा");
+
+  const member = members[currentMemberIndex];
+  let totalLoan = 0;
+  let totalBalance = 0;
+
+  let message = `${member.name} (उचल ) डेटा:\n==================\n`;
+
+  member.loans.forEach(loan => {
+    const month = formatMonth(loan.date);
+
+    const loanAmount = parseFloat(loan.loanAmount || 0);
+    const paidAmount = parseFloat(loan.principalPaid || 0);
+
+    if (loanAmount > 0) {
+      totalLoan += loanAmount;
+      totalBalance += loanAmount;
+      message += `${month} फंडातून (उचल): ₹${loanAmount.toFixed(2)}\n`;
+    }
+    if (paidAmount > 0) {
+      message += `${month} रक्कम भरली: ₹${paidAmount.toFixed(2)}\n`;
+    }
+  });
+
+  message += "==================\n";
+  message += `एकूण (उचल बाकी): ₹${totalBalance.toFixed(2)}`;
+
+  const encoded = encodeURIComponent(message);
+  window.open(`https://wa.me/?text=${encoded}`, '_blank');
+}
+
+
+
+
+
+
+
+
+
+
   // Excel Export
   function exportExcel() {
     if(currentMemberIndex === null) return alert("कृपया सदस्य निवडा");
@@ -514,8 +770,8 @@ function downloadMemberListPDF() {
 
     // Loan sheet
     const loanData = member.loans.map((row, i) => ({
-      महिना: i + 1,
-      कर्ज: row.loanAmount,
+      महिना: formatDateToMarathi(row.date), // 🔁 इथे बदल
+            कर्ज: row.loanAmount,
       व्याज: row.interest,
       मुद्दल: row.principalPaid,
       शिल्लक: row.loanAmount + row.interest - row.principalPaid
@@ -656,6 +912,9 @@ function saveToLocal() {
 window.onload = () => {
   loadFromLocal();
   restoreFromCloud();
+updateShareTotal();
+recalcLoanRows();
+updateLoanTotals();
 };
 
 
@@ -663,3 +922,4 @@ window.onload = () => {
 
 </body>
 </html>
+
