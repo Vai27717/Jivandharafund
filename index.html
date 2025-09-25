@@ -196,7 +196,6 @@
   <button onclick="shareLoanData()" style="background: #25D366; color: white; border: none; padding: 4px 10px; border-radius: 4px;">
     📤 WhatsApp कर्ज डेटा
 <button onclick="downloadCurrentMemberPDF()">📄 सदस्याचा PDF डाउनलोड करा</button>
-
   </button>
 </div>
 
@@ -318,6 +317,7 @@
   if(member.loans.length === 0) {
     loanTbody.appendChild(createLoanRow("", 0, 0, 0));
   }
+  recalcLoanRows();
   updateLoanTotals();
 
   addContentEditableListeners();
@@ -490,7 +490,7 @@ function removeShareRow() {
 }
 
 
-  function saveLoanData() {
+function saveLoanData() {
   const tbody = document.querySelector("#loanTable tbody");
   const loans = [];
   for (let row of tbody.rows) {
@@ -498,11 +498,16 @@ function removeShareRow() {
     const loanAmount = parseFloat(row.cells[1].textContent) || 0;
     const interest = parseFloat(row.cells[2].textContent) || 0;
     const principalPaid = parseFloat(row.cells[3].textContent) || 0;
-    loans.push({ date, loanAmount, interest, principalPaid });
+
+    // निवडलेला प्रकार dropdown मधून मिळवा (optional fallback)
+    const type = document.getElementById("paymentType").value || "";
+
+    loans.push({ date, loanAmount, interest, principalPaid, type });
   }
   members[currentMemberIndex].loans = loans;
   saveMembers();
 }
+
 
 
   function updateShareTotal() {
@@ -763,30 +768,42 @@ function formatMonth(dateStr) {
 function shareLoanData() {
   if (currentMemberIndex === null) return alert("कृपया सदस्य निवडा");
 
-  const member = members[currentMemberIndex];
-  let totalLoan = 0;
-  let totalBalance = 0;
 
+
+  const member = members[currentMemberIndex];
   let message = `${member.name} (उचल ) डेटा:\n==================\n`;
 
   member.loans.forEach(loan => {
     const month = formatMonth(loan.date);
-
     const loanAmount = parseFloat(loan.loanAmount || 0);
-    const paidAmount = parseFloat(loan.principalPaid || 0);
+    const interestPaid = parseFloat(loan.interestPaid || 0);
+    const principalPaid = parseFloat(loan.principalPaid || 0);
 
     if (loanAmount > 0) {
-      totalLoan += loanAmount;
-      totalBalance += loanAmount;
       message += `${month} फंडातून (उचल): ₹${loanAmount.toFixed(2)}\n`;
     }
-    if (paidAmount > 0) {
-      message += `${month} रक्कम भरली: ₹${paidAmount.toFixed(2)}\n`;
+
+    if (interestPaid > 0 && principalPaid === 0) {
+      message += `${month} रक्कम भरली : ₹${interestPaid.toFixed(2)}\n`;
+    } else if (principalPaid > 0 && interestPaid === 0) {
+      message += `${month} रक्कम भरली : ₹${principalPaid.toFixed(2)}\n`;
+    } else if (interestPaid > 0 && principalPaid > 0) {
+      const total = interestPaid + principalPaid;
+      message += `${month} रक्कम भरली : ₹${total.toFixed(2)}\n`;
     }
   });
 
   message += "==================\n";
-  message += `एकूण (उचल बाकी): ₹${totalBalance.toFixed(2)}`;
+
+  const balanceElement = document.getElementById("totalBalance");
+  let finalBalance = "0.00";
+
+  if (balanceElement) {
+    const balanceText = balanceElement.textContent || "0";
+    finalBalance = parseFloat(balanceText).toFixed(2);
+  }
+
+  message += `एकूण (उचल बाकी): ₹${finalBalance}`;
 
   const encoded = encodeURIComponent(message);
   window.open(`https://wa.me/?text=${encoded}`, '_blank');
@@ -962,6 +979,7 @@ window.onload = () => {
 updateShareTotal();
 recalcLoanRows();
 updateLoanTotals();
+
 };
 
 
@@ -969,4 +987,3 @@ updateLoanTotals();
 
 </body>
 </html>
-
