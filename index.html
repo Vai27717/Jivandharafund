@@ -127,6 +127,7 @@
   <div class="flex-row">
     <input type="text" id="memberName" placeholder="Share Holder Name" />
     <input type="text" id="memberContact" placeholder="Contact No" />
+     <button onclick="pickContact()">📱</button>
     <button onclick="addMember()">+ Add S.H.</button>
     <button onclick="backupAllToCloud()">☁️ All Backup</button>
 <button onclick="restoreFromCloud()">📥 Backup To Load</button>
@@ -189,13 +190,14 @@
   
 <button onclick="removeShareRow()">- Remove Row</button>
 <div id="shareRowCount" style="display:inline-block; margin-left:10px; font-weight:bold;">Rows: 0</div>
-  
+  <button onclick="backupAllToCloud()">📦 Extra Backup</button>
   <h2 id="loanHeading">कर्ज (Loan) (₹)</h2>
   <table id="loanTable">
 <div style="text-align: right; margin-bottom: 5px;">
   <button onclick="shareLoanData()" style="background: #25D366; color: white; border: none; padding: 4px 10px; border-radius: 4px;">
     📤 WhatsApp कर्ज डेटा
 <button onclick="downloadCurrentMemberPDF()">📄 सदस्याचा PDF डाउनलोड करा</button>
+
   </button>
 </div>
 
@@ -216,7 +218,7 @@
   <button onclick="addLoanRow()">+ Add Row</button>
  <button onclick="removeLoanRow()">- Remove Row</button>
 <div id="loanRowCount" style="display:inline-block; margin-left:10px; font-weight:bold;">Rows: 0</div>
-
+<button onclick="backupAllToCloud()">📦 Extra Backup</button>
 </section>
 
 <section class="section">
@@ -490,7 +492,7 @@ function removeShareRow() {
 }
 
 
-function saveLoanData() {
+  function saveLoanData() {
   const tbody = document.querySelector("#loanTable tbody");
   const loans = [];
   for (let row of tbody.rows) {
@@ -498,16 +500,11 @@ function saveLoanData() {
     const loanAmount = parseFloat(row.cells[1].textContent) || 0;
     const interest = parseFloat(row.cells[2].textContent) || 0;
     const principalPaid = parseFloat(row.cells[3].textContent) || 0;
-
-    // निवडलेला प्रकार dropdown मधून मिळवा (optional fallback)
-    const type = document.getElementById("paymentType").value || "";
-
-    loans.push({ date, loanAmount, interest, principalPaid, type });
+    loans.push({ date, loanAmount, interest, principalPaid });
   }
   members[currentMemberIndex].loans = loans;
   saveMembers();
 }
-
 
 
   function updateShareTotal() {
@@ -809,6 +806,30 @@ function shareLoanData() {
   window.open(`https://wa.me/?text=${encoded}`, '_blank');
 }
 
+
+async function pickContact() {
+  // Contact Picker API supported आहे का ते तपासा   
+  if ('contacts' in navigator && 'ContactsManager' in window) {
+    try {
+      const props = ['name', 'tel']; // नाव व मोबाईल नंबर साठी
+      const opts = { multiple: false };
+
+      const contacts = await navigator.contacts.select(props, opts);
+
+      if (contacts.length > 0) {
+        const contact = contacts[0];
+
+        // Share Holder Name व Contact No फील्ड मध्ये भरले जाईल
+        document.getElementById('memberName').value = contact.name[0] || '';
+        document.getElementById('memberContact').value = contact.tel[0] || '';
+      }
+    } catch (error) {
+      alert("Contact निवडताना त्रुटी आली:\n" + error);
+    }
+  } else {
+    alert("तुमचा ब्राउझर Contact Picker ला सपोर्ट करत नाही.");
+  }
+}
 
 
 
